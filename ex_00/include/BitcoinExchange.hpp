@@ -6,11 +6,13 @@
 #include <time.h>
 #include <cmath>
 #include <ctime>
+#include <limits.h>
 
 #define DATA_FILE "data.csv"
 
 struct date_t : public tm {
 	date_t();
+	date_t(tm* time);
 
 	bool operator<(const date_t &rhs) const;
 	bool operator>(const date_t &rhs) const;

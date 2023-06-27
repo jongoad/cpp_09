@@ -12,6 +12,20 @@ date_t::date_t() {
   tm_isdst = 0;
 }
 
+date_t::date_t(tm* time) {
+    tm_gmtoff = time->tm_gmtoff;
+    tm_hour = time->tm_hour;
+    tm_isdst = time->tm_isdst;
+    tm_mday = time->tm_mday;
+    tm_min = time->tm_min;
+    tm_mon = time->tm_mon;
+    tm_sec = time->tm_sec;
+    tm_wday = time->tm_wday;
+    tm_yday = time->tm_yday;
+    tm_year = time->tm_year;
+    tm_zone = time->tm_zone;
+}
+
 bool date_t::operator<(const date_t &rhs) const { return mktime((tm *)this) < mktime((tm *)&rhs); }
 
 bool date_t::operator>(const date_t &rhs) const { return mktime((tm *)this) > mktime((tm *)&rhs); }
@@ -33,12 +47,9 @@ bool date_t::operator!=(const date_t &rhs) const {
 }
 
 std::ostream &operator<<(std::ostream &os, const date_t &date) {
-  os << date.tm_year << '-' << date.tm_mon << '-' << date.tm_mday;
+  os << date.tm_year + 1900 << '-' << date.tm_mon + 1 << '-' << date.tm_mday;
   return os;
 }
-
-
-
 
 /* Constructors & Destructor */
 BitcoinExchange::BitcoinExchange() {
@@ -46,6 +57,12 @@ BitcoinExchange::BitcoinExchange() {
         readData();
     } catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
+    }
+
+    std::map<date_t, float>::iterator it = exchange_rates_.begin();
+    for (; it != exchange_rates_.end(); ++it) {
+        std::cout << "Date: " << it->first << std::endl;
+        std::cout << "Value: " << it->second << std::endl << std::endl;
     }
 };
 
@@ -82,47 +99,41 @@ void BitcoinExchange::readData(void) {
 };
 
 void BitcoinExchange::parseDataLine(const std::string& line) {
-    std::size_t delimPos = line.find_first_of(',');
-    std::string valueStr = line.substr(delimPos + 1, std::string::npos);
-    std::string dateStr = line.substr(0, line.size() - (line.size() - delimPos));
+    std::string valueStr = line.substr(line.find_first_of(',') + 1, std::string::npos);
+    std::string dateStr = line.substr(0, line.size() - (line.size() - line.find_first_of(',')));
 
     //Convert value to float and check for errors
     double value;
     try {
         value = std::stod(valueStr);
         if (std::isnan(value) || std::isinf(value)) {
-            std::cout << "NAN or INF found" << std::endl;
+            std::cout << "Error: NAN or INF found" << std::endl;
             return;
         }
     } catch (const std::exception& e) {
-        std::cerr << "std::stod exception" << std::endl;
         return;
     }
  
-
     //Convert date to struct and check for errors
-
     time_t t = time(NULL);
     struct tm *res = localtime(&t);
-    char *test = (char *)dateStr.c_str();
-    strptime(test, "%Y-%m-%d", res);
-    
+    char *buf = (char *)dateStr.c_str();
+    strptime(buf, "%Y-%m-%d", res);
+    date_t date(res);
+    if (date.tm_year >= 2008 - 1900 && date.tm_year <= 2023
+        && date.tm_mon >= 0 && date.tm_mon <= 11
+        && date.tm_mday >= 1 && date.tm_mday <= 31
+        && mktime((tm *)&date) != -1) {
+        exchange_rates_[date] = value;
+    }
 
-    std::cout << res << std::endl;
-    //Convert back to string to debug
-    char dateRes[20];
-    strftime(dateRes, 20, "%Y-%m-%d", res);
+    // DEBUG
+    // char dateRes[20];
+    // strftime(dateRes, 20, "%Y-%m-%d", (tm *)&date);
 
-    // time_t today = time(NULL);
-    // struct tm* now = localtime(&today); 
-   
-    
-
-    /* debug */
     // std::cout << "Date string: " << dateStr << std::endl;
     // std::cout << "Value string: " << valueStr << std::endl;
 
     // std::cout << "Date: " << dateRes << std::endl << std::endl;
     // std::cout << "Value: " << value << std::endl;
-    
 };
