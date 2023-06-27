@@ -9,9 +9,9 @@ CPP_FILES		:= main.cpp BitcoinExchange.cpp
 #---------------------------------------------------------#
 #   Directory information and object directory building   #
 #---------------------------------------------------------#
-INC				:= ./includes
+INC				:= ./include
 
-SRC_DIR			= ./srcs
+SRC_DIR			= ./src
 SRCS			= $(addprefix $(SRC_DIR)/, $(CPP_FILES))
 
 OBJ_DIR			= ./obj

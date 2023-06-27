@@ -6,6 +6,8 @@
 
 int main (int argc, char **argv) {
 
+	(void)argc;
+	(void)argv;
 	//Check for file
 	// if (argc < 2) {
 	// 	std::cout << ERR_FILE_OPEN << std::endl;

@@ -5,8 +5,20 @@
 #include <fstream>
 #include <time.h>
 #include <cmath>
+#include <ctime>
 
 #define DATA_FILE "data.csv"
+
+struct date_t : public tm {
+	date_t();
+
+	bool operator<(const date_t &rhs) const;
+	bool operator>(const date_t &rhs) const;
+	bool operator<=(const date_t &rhs) const;
+	bool operator>=(const date_t &rhs) const;
+	bool operator==(const date_t &rhs) const;
+	bool operator!=(const date_t &rhs) const;
+};
 
 class BitcoinExchange {
 	public:
@@ -31,7 +43,7 @@ class BitcoinExchange {
         };
 
 	private:
-		std::map<std::string, int> exchange_rates_;
+		std::map<date_t, float> exchange_rates_;
 		std::map<std::string, int> values_;
 
 };
