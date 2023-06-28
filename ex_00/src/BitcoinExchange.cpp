@@ -203,10 +203,11 @@ void BitcoinExchange::exchanger(date_t date, float value) {
     //find correct date, retrieve value, print
     std::map<date_t, float>::iterator it = exchange_rates_.find(date);
 
-    if (it != exchange_rates_.end()) {
+    if ( it != exchange_rates_.end()) {
         std::cout << date << " => " << value * it->second << std::endl;
-    } else {
+    }
+    else {
+        //Need to find lowest date here
         std::cout << "Date not found" << std::endl;
     }
-    
 }
