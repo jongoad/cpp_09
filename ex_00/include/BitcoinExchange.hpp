@@ -9,6 +9,7 @@
 #include <limits.h>
 
 #define DATA_FILE "data.csv"
+#define ERR_FILE_OPEN "Error: could not open file."
 
 struct date_t : public tm {
 	date_t();
@@ -26,7 +27,7 @@ class BitcoinExchange {
 	public:
 
 		/* Constructors & Destructor */
-		BitcoinExchange();
+		BitcoinExchange(const std::string& input);
 		BitcoinExchange(const BitcoinExchange& other);
 		~BitcoinExchange();
 		BitcoinExchange operator=(const BitcoinExchange& rhs);
@@ -35,12 +36,16 @@ class BitcoinExchange {
 		/* Public Member Functions */
 		void readData(void);
 		void parseDataLine(const std::string& line);
+		void readInput(const std::string& input);
+		void parseInputLine(const std::string& line);
+
+		void exchanger(date_t date, float value);
 
 		 /* Exceptions */
         class fileOpenError : public std::exception {
             public:
                 const char *what() const throw() {
-                    return ("Unable to open data file");
+                    return ERR_FILE_OPEN;
                 }
         };
 

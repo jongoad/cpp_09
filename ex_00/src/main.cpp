@@ -1,17 +1,16 @@
 #include <iostream>
 #include "../include/BitcoinExchange.hpp"
-
-#define ERR_FILE_OPEN "Error: could not open file."
+#include <string>
 
 
 int main (int argc, char **argv) {
 
-	(void)argc;
-	(void)argv;
 	//Check for file
-	// if (argc < 2) {
-	// 	std::cout << ERR_FILE_OPEN << std::endl;
-	// }
-	BitcoinExchange exchange;
+	if (argc < 2) {
+		std::cerr << ERR_FILE_OPEN << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	std::string filePath = argv[1];
+	BitcoinExchange exchange(filePath);
 
 }

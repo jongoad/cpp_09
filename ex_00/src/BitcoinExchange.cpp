@@ -1,5 +1,6 @@
 #include "../include/BitcoinExchange.hpp"
 
+/* Extenstion for tm date/time struct*/
 date_t::date_t() {
   tm_sec   = 0;
   tm_min   = 0;
@@ -52,17 +53,16 @@ std::ostream &operator<<(std::ostream &os, const date_t &date) {
 }
 
 /* Constructors & Destructor */
-BitcoinExchange::BitcoinExchange() {
+BitcoinExchange::BitcoinExchange(const std::string& input) {
     try {
         readData();
     } catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
     }
-
-    std::map<date_t, float>::iterator it = exchange_rates_.begin();
-    for (; it != exchange_rates_.end(); ++it) {
-        std::cout << "Date: " << it->first << std::endl;
-        std::cout << "Value: " << it->second << std::endl << std::endl;
+    try {
+        readInput(input);
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
     }
 };
 
@@ -120,7 +120,7 @@ void BitcoinExchange::parseDataLine(const std::string& line) {
     char *buf = (char *)dateStr.c_str();
     strptime(buf, "%Y-%m-%d", res);
     date_t date(res);
-    if (date.tm_year >= 2008 - 1900 && date.tm_year <= 2023
+    if (date.tm_year >= 2009 - 1900 && date.tm_year <= 2023 - 1900
         && date.tm_mon >= 0 && date.tm_mon <= 11
         && date.tm_mday >= 1 && date.tm_mday <= 31
         && mktime((tm *)&date) != -1) {
@@ -137,3 +137,76 @@ void BitcoinExchange::parseDataLine(const std::string& line) {
     // std::cout << "Date: " << dateRes << std::endl << std::endl;
     // std::cout << "Value: " << value << std::endl;
 };
+
+void BitcoinExchange::readInput(const std::string& input) {
+    std::ifstream   data;
+    std::string     line;
+
+    data.open(input);
+
+    //Check for failbit on stream, if fail detected then throw exception
+    if (!data.good()) {
+        throw BitcoinExchange::fileOpenError();
+    }
+
+    //Read entire file, parse and place in map
+    while (std::getline(data, line)) {
+        parseInputLine(line);
+    }
+    data.close();
+};
+
+void BitcoinExchange::parseInputLine(const std::string& line) {
+    std::string valueStr = line.substr(line.find_first_of('|') + 1, std::string::npos);
+    std::string dateStr = line.substr(0, line.size() - (line.size() - line.find_first_of('|')));
+
+    //REMOVE WHITESPACE
+    valueStr = valueStr.substr(valueStr.find_first_of(' ') + 1, std::string::npos);
+    dateStr = dateStr.substr(0, dateStr.size() - (dateStr.size() - dateStr.find_first_of(' ')));
+
+    //Convert value
+    double value;
+    try {
+        value = std::stod(valueStr);
+        if (std::isnan(value) || std::isinf(value)) {
+            std::cerr << "Error: NAN or INF found" << std::endl;
+            return;
+        } else if (value < 0) {
+            std::cerr << "Error: not a positive number." << std::endl;
+            return;
+        } else if (value > 1000) {
+            std::cerr << "Error: number is too large." << std::endl;
+            return;
+        }
+    } catch (const std::exception& e) {
+        return;
+    }
+    
+    //Convert date
+    time_t t = time(NULL);
+    struct tm *res = localtime(&t);
+    char *buf = (char *)dateStr.c_str();
+    strptime(buf, "%Y-%m-%d", res);
+    date_t date(res);
+    if (date.tm_year >= 2008 - 1900 && date.tm_year <= 2023 - 1900
+        && date.tm_mon >= 0 && date.tm_mon <= 11
+        && date.tm_mday >= 1 && date.tm_mday <= 31
+        && mktime((tm *)&date) != -1) {
+        std::cout << "Exchanger called" << std::endl; 
+        exchanger(date, value);
+    } else {
+        std::cerr << "Error: bad input => " << dateStr << std::endl;
+    }
+};
+
+void BitcoinExchange::exchanger(date_t date, float value) {
+    //find correct date, retrieve value, print
+    std::map<date_t, float>::iterator it = exchange_rates_.find(date);
+
+    if (it != exchange_rates_.end()) {
+        std::cout << date << " => " << value * it->second << std::endl;
+    } else {
+        std::cout << "Date not found" << std::endl;
+    }
+    
+}
