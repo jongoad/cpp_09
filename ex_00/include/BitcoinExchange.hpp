@@ -7,6 +7,7 @@
 #include <cmath>
 #include <ctime>
 #include <limits.h>
+#include <stdlib.h>
 
 #define DATA_FILE "data.csv"
 #define ERR_FILE_OPEN "Error: could not open file."

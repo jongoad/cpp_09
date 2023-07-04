@@ -113,7 +113,7 @@ void BitcoinExchange::parseDataLine(const std::string& line) {
     //Convert value to float and check for errors
     double value;
     try {
-        value = std::stod(valueStr);
+        value = strtod(valueStr.c_str(), NULL);
         if (std::isnan(value) || std::isinf(value)) {
             std::cout << "Error: NAN or INF found" << std::endl;
             return;
@@ -140,7 +140,7 @@ void BitcoinExchange::readInput(const std::string& input) {
     std::ifstream   data;
     std::string     line;
 
-    data.open(input);
+    data.open(input.c_str());
 
     //Check for failbit on stream, if fail detected then throw exception
     if (!data.good()) {
@@ -179,7 +179,7 @@ void BitcoinExchange::parseInputLine(const std::string& line) {
     //Convert value
     double value;
     try {
-        value = std::stod(valueStr);
+        value = strtod(valueStr.c_str(), NULL);
         if (std::isnan(value) || std::isinf(value)) {
             std::cerr << "Error: NAN or INF found" << std::endl;
             return;
