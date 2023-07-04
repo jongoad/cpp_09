@@ -54,11 +54,17 @@ std::ostream &operator<<(std::ostream &os, const date_t &date) {
 
 /* Constructors & Destructor */
 BitcoinExchange::BitcoinExchange(const std::string& input) {
+    //Read and parse the data.csv file
     try {
         readData();
     } catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
     }
+
+    //Set min and max keys to save calculations later
+    setMinMax();
+
+    //Read and parse the input.txt file. then print results
     try {
         readInput(input);
     } catch (const std::exception &e) {
@@ -67,7 +73,7 @@ BitcoinExchange::BitcoinExchange(const std::string& input) {
 };
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange& other){
-
+    // if (*this )
 };
 
 BitcoinExchange::~BitcoinExchange() {
@@ -164,6 +170,20 @@ void BitcoinExchange::parseInputLine(const std::string& line) {
     valueStr = valueStr.substr(valueStr.find_first_of(' ') + 1, std::string::npos);
     dateStr = dateStr.substr(0, dateStr.size() - (dateStr.size() - dateStr.find_first_of(' ')));
 
+    //Convert date
+    time_t t = time(NULL);
+    struct tm *res = localtime(&t);
+    char *buf = (char *)dateStr.c_str();
+    strptime(buf, "%Y-%m-%d", res);
+    date_t date(res);
+    if (!(date.tm_year >= 2008 - 1900 && date.tm_year <= 2023 - 1900
+        && date.tm_mon >= 0 && date.tm_mon <= 11
+        && date.tm_mday >= 1 && date.tm_mday <= 31
+        && mktime((tm *)&date) != -1)) {
+        std::cerr << "Error: bad input => " << dateStr << std::endl;
+        return;
+    }
+
     //Convert value
     double value;
     try {
@@ -181,33 +201,37 @@ void BitcoinExchange::parseInputLine(const std::string& line) {
     } catch (const std::exception& e) {
         return;
     }
-    
-    //Convert date
-    time_t t = time(NULL);
-    struct tm *res = localtime(&t);
-    char *buf = (char *)dateStr.c_str();
-    strptime(buf, "%Y-%m-%d", res);
-    date_t date(res);
-    if (date.tm_year >= 2008 - 1900 && date.tm_year <= 2023 - 1900
-        && date.tm_mon >= 0 && date.tm_mon <= 11
-        && date.tm_mday >= 1 && date.tm_mday <= 31
-        && mktime((tm *)&date) != -1) {
-        std::cout << "Exchanger called" << std::endl; 
-        exchanger(date, value);
-    } else {
-        std::cerr << "Error: bad input => " << dateStr << std::endl;
+
+    //Call exchanger function
+    exchanger(date, value);
+};
+
+void BitcoinExchange::setMinMax(void) {
+    std::map<date_t, float>::iterator it = exchange_rates_.begin();
+    this->min_ = it;
+    this->max_ = it;
+
+    for (; it != exchange_rates_.end(); it++) {
+        if (it->first < min_->first) {
+            min_ = it;
+        } else if (it->first > max_->first) {
+            max_ = it;
+        } 
     }
 };
 
 void BitcoinExchange::exchanger(date_t date, float value) {
-    //find correct date, retrieve value, print
     std::map<date_t, float>::iterator it = exchange_rates_.find(date);
 
     if ( it != exchange_rates_.end()) {
-        std::cout << date << " => " << value * it->second << std::endl;
+        std::cout << date << " => " << value << " = " << value * it->second << std::endl;
+    } else if (date < min_->first) {    //Handle smaller than lowest value
+        std::cout << date << " => " << value << " = " << value * min_->second << std::endl;
+    } else if (date > max_->first) {    //Handle larger than largest value
+        std::cout << date << " => " << value << " = " << value * max_->second << std::endl;
+    } else {
+        it = exchange_rates_.lower_bound(date);
+        it--;
+        std::cout << date << " => " << value << " = " << value * it->second << std::endl;
     }
-    else {
-        //Need to find lowest date here
-        std::cout << "Date not found" << std::endl;
-    }
-}
+};
