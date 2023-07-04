@@ -73,14 +73,16 @@ BitcoinExchange::BitcoinExchange(const std::string& input) {
 };
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange& other){
-    // if (*this )
+    *this = other;
 };
 
-BitcoinExchange::~BitcoinExchange() {
-
-};
+BitcoinExchange::~BitcoinExchange() {};
 
 BitcoinExchange BitcoinExchange::operator=(const BitcoinExchange& rhs) {
+    exchange_rates_ = rhs.exchange_rates_;
+    values_ = rhs.values_;
+    min_ = rhs.min_;
+    max_ = rhs.max_;
     return *this;
 };
 
@@ -132,16 +134,6 @@ void BitcoinExchange::parseDataLine(const std::string& line) {
         && mktime((tm *)&date) != -1) {
         exchange_rates_[date] = value;
     }
-
-    // DEBUG
-    // char dateRes[20];
-    // strftime(dateRes, 20, "%Y-%m-%d", (tm *)&date);
-
-    // std::cout << "Date string: " << dateStr << std::endl;
-    // std::cout << "Value string: " << valueStr << std::endl;
-
-    // std::cout << "Date: " << dateRes << std::endl << std::endl;
-    // std::cout << "Value: " << value << std::endl;
 };
 
 void BitcoinExchange::readInput(const std::string& input) {
@@ -166,7 +158,7 @@ void BitcoinExchange::parseInputLine(const std::string& line) {
     std::string valueStr = line.substr(line.find_first_of('|') + 1, std::string::npos);
     std::string dateStr = line.substr(0, line.size() - (line.size() - line.find_first_of('|')));
 
-    //REMOVE WHITESPACE
+    //Remove whitespace
     valueStr = valueStr.substr(valueStr.find_first_of(' ') + 1, std::string::npos);
     dateStr = dateStr.substr(0, dateStr.size() - (dateStr.size() - dateStr.find_first_of(' ')));
 
