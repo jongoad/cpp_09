@@ -27,7 +27,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 #--------------------------------#
 CC				= c++
 RM				= rm -rf
-CFLAGS			= -Wall -Wextra -Werror -Wshadow -Wno-shadow -std=c++98 -I./includes
+CFLAGS			= -Wall -Wextra -Werror -Wshadow -Wno-shadow -std=c++98 -I./include
 
 #--------------------------------#
 #   Makefile rules and targets   #

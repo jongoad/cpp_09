@@ -1,7 +1,7 @@
 #include <vector>
 #include <deque>
 #include <iostream>
-#include "../include/PmergeMe.hpp"
+#include "../src/PmergeMe.cpp"
 
 int main (int argc, char** argv) {
 	if (argc < 2) {
