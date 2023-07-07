@@ -19,12 +19,12 @@ class PmergeMe {
 
 
 		bool parseInput(char** input);
-		void vectorSort();
-		void dequeSort();
 
         void printContainer(void);
-        
-        
+    
+        void createPairs(void);
+		void sortPairsInternal(void);
+        void sortPairsExternal(void);
 
         void mergeInsertSort(void);
 

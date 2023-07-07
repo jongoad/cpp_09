@@ -20,6 +20,12 @@ PmergeMe<T>::PmergeMe(char** input) {
 		isOdd = false;
 	}
 
+	//Create pairs
+	createPairs();
+
+	//Sort pairs internally
+
+	//Sort pairs externally
 
 }
 
@@ -65,6 +71,30 @@ void PmergeMe<T>::printContainer(void) {
 template<class T>
 void PmergeMe<T>::mergeInsertSort() {
 
+}
+
+template<class T>
+void PmergeMe<T>::createPairs(void) {
+	int i = 0;
+
+	int val1, val2;
+	for (; i < container_.size() - 1; ++i) {
+		sorted_.push_back(std::make_pair(container_[i], container_[i + 1]));
+	}
+}
+
+template<class T>
+void PmergeMe<T>::sortPairsInternal(void) {
+	int temp;
+	T::iterator it = sorted_.begin();
+	
+	for (; it != sorted_.end(); ++it) {
+		if (it->first < it->second) {
+			temp = it->first;
+			it->first = it->second;
+			it->second = temp;
+		}
+	}
 }
 
 
