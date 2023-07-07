@@ -6,6 +6,7 @@
 #include <deque>
 #include <cstdlib>
 #include <limits.h>
+#include <utility>
 
 template <class T>
 class PmergeMe {
@@ -22,8 +23,15 @@ class PmergeMe {
 		void dequeSort();
 
         void printContainer(void);
+        
+        
+
+        void mergeInsertSort(void);
 
     private:
-		T container_;
+		T       container_;
+        T       sorted_;
+        int     oddOneOut_;
+        bool    isOdd;
 
 };
