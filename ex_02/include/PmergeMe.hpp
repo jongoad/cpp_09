@@ -27,6 +27,8 @@ class PmergeMe {
         void sortPairsExternal(void);
 
         void mergeInsertSort(void);
+        void mergeInsertSortHelper(int left, int right);
+        void merge(int left, int mid, int right);
 
     private:
 		T       container_;
