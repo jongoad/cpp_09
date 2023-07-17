@@ -5,16 +5,12 @@ PmergeMe<T>::PmergeMe() {}
 
 template <class T>
 PmergeMe<T>::PmergeMe(char** input) {
-	if (!parseInput(input)) {
-		std::cerr << "Error" << std::endl;
-		return;
+	for (int i = 1; input[i] != NULL; ++i) {
+		int res = std::atoi(input[i]);
+		container_.push_back(std::make_pair(res, res));
+		i++;
 	}
-
-	std::cout << "Before: ";
-	printContainer();
 	mergeInsertSort();
-	std::cout << "After: ";
-	printContainer();
 }
 
 template <class T>
@@ -33,20 +29,6 @@ const PmergeMe<T>& PmergeMe<T>::operator=(const PmergeMe<T>& rhs) {
 		container_ = rhs.container_;
 	}
 	return *this;
-}
-
-template <class T>
-bool PmergeMe<T>::parseInput(char **input) {
-	int i = 1;
-	while (input[i]) {
-		long res = std::atol(input[i]);
-		if (res < 0 || res > INT_MAX) {
-			return false;
-		}
-		container_.push_back(std::make_pair(res, res));
-		i++;
-	}
-	return true;
 }
 
 template<class T>

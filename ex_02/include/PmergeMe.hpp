@@ -7,6 +7,8 @@
 #include <cstdlib>
 #include <limits.h>
 #include <utility>
+#include <time.h>
+#include <set>
 
 template <class T>
 class PmergeMe {
@@ -17,8 +19,6 @@ class PmergeMe {
         ~PmergeMe();
         const PmergeMe& operator=(const PmergeMe& rhs);
 
-
-		bool parseInput(char** input);
         void printContainer(void);
         void mergeInsertSort(void);
         void mergeInsertSortHelper(int left, int right);
