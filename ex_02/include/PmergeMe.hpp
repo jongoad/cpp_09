@@ -19,21 +19,11 @@ class PmergeMe {
 
 
 		bool parseInput(char** input);
-
         void printContainer(void);
-    
-        void createPairs(void);
-		void sortPairsInternal(void);
-        void sortPairsExternal(void);
-
         void mergeInsertSort(void);
         void mergeInsertSortHelper(int left, int right);
         void merge(int left, int mid, int right);
 
     private:
 		T       container_;
-        T       sorted_;
-        int     oddOneOut_;
-        bool    isOdd;
-
 };
