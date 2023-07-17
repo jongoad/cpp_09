@@ -35,7 +35,6 @@ class BitcoinExchange {
 		~BitcoinExchange();
 		BitcoinExchange operator=(const BitcoinExchange& rhs);
 
-
 		/* Public Member Functions */
 		void readData(void);
 		void parseDataLine(const std::string& line);
@@ -53,8 +52,8 @@ class BitcoinExchange {
         };
 
 	private:
-		std::map<date_t, float> exchange_rates_;
-		std::map<std::string, int> values_;
-		std::map<date_t, float>::iterator min_;
-		std::map<date_t, float>::iterator max_;
+		std::map<date_t, float>				exchange_rates_;
+		std::map<std::string, int>			values_;
+		std::map<date_t, float>::iterator	min_;
+		std::map<date_t, float>::iterator	max_;
 };

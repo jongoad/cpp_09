@@ -19,7 +19,6 @@ int main (int argc, char** argv) {
 	}
 	std::cout << std::endl;
 
-
 	//Read and parse elements into set
 	std::set<int> sorted;
 	for (int i = 1; i < argc; ++i) {
@@ -41,8 +40,6 @@ int main (int argc, char** argv) {
 	}
 	std::cout << std::endl;
 
-
-
 	//Run algorithm with std::vector
 	clock_t begin = clock();
 	PmergeMe<std::vector<std::pair<int,int> > > vec(argv);
@@ -57,4 +54,5 @@ int main (int argc, char** argv) {
 	result = (double)(end - begin);
 	std::cout << "Time to process a range " << sorted.size() << " elements with std::dequeue: " << result << "us" << std::endl;
 
+	return EXIT_SUCCESS;
 }

@@ -25,5 +25,5 @@ class PmergeMe {
         void merge(int left, int mid, int right);
 
     private:
-		T       container_;
+		T	container_;
 };
