@@ -107,6 +107,12 @@ void BitcoinExchange::readData(void) {
 };
 
 void BitcoinExchange::parseDataLine(const std::string& line) {
+
+    //Protect from invalid format
+    if (line.find_first_of(',') == std::string::npos) {
+        return;
+    }
+    
     std::string valueStr = line.substr(line.find_first_of(',') + 1, std::string::npos);
     std::string dateStr = line.substr(0, line.size() - (line.size() - line.find_first_of(',')));
 
@@ -155,13 +161,26 @@ void BitcoinExchange::readInput(const std::string& input) {
 };
 
 void BitcoinExchange::parseInputLine(const std::string& line) {
+
+    //Protect from invalid format
+    if (line.find_first_of('|') == std::string::npos) {
+        std::cerr << "Error: bad input => " << line << std::endl;
+        return;
+    }
+
     std::string valueStr = line.substr(line.find_first_of('|') + 1, std::string::npos);
     std::string dateStr = line.substr(0, line.size() - (line.size() - line.find_first_of('|')));
+
 
     //Remove whitespace
     valueStr = valueStr.substr(valueStr.find_first_of(' ') + 1, std::string::npos);
     dateStr = dateStr.substr(0, dateStr.size() - (dateStr.size() - dateStr.find_first_of(' ')));
 
+    //Return if first line (date | value)
+    if (valueStr == "value" && dateStr == "date") {
+        return;
+    }
+    
     //Convert date
     time_t t = time(NULL);
     struct tm *res = localtime(&t);
