@@ -61,6 +61,12 @@ BitcoinExchange::BitcoinExchange(const std::string& input) {
 		std::cerr << e.what() << std::endl;
     }
 
+    //Check if data file was empty, and exit if so
+    if (exchange_rates_.empty()) {
+        std::cerr << "Error: data.csv is empty." << std::endl;
+        exit(1);
+    }
+
     //Set min and max keys to save calculations later
     setMinMax();
 
@@ -177,7 +183,7 @@ void BitcoinExchange::parseInputLine(const std::string& line) {
     dateStr = dateStr.substr(0, dateStr.size() - (dateStr.size() - dateStr.find_first_of(' ')));
 
     //Return if first line (date | value)
-    if (valueStr == "value" && dateStr == "date") {
+    if (valueStr == "value" || dateStr == "date") {
         return;
     }
     
