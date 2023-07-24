@@ -7,6 +7,7 @@ template <class T>
 PmergeMe<T>::PmergeMe(char** input) {
 	for (int i = 1; input[i] != NULL; ++i) {
 		int res = std::atoi(input[i]);
+		//Need to use res,res because of pair use in container template
 		container_.push_back(std::make_pair(res, res));
 	}
 	mergeInsertSort();
@@ -48,11 +49,11 @@ void PmergeMe<T>::mergeInsertSort() {
 template <class T>
 void PmergeMe<T>::mergeInsertSortHelper(int left, int right) {
     if (left < right) {
-      int mid = left + (right - left) / 2;
+		int mid = left + (right - left) / 2;
 
-      mergeInsertSortHelper(left, mid);
-      mergeInsertSortHelper(mid + 1, right);
-      merge(left, mid, right);
+		mergeInsertSortHelper(left, mid);
+		mergeInsertSortHelper(mid + 1, right);
+		merge(left, mid, right);
     }
 }
 
@@ -61,9 +62,11 @@ void PmergeMe<T>::merge(int left, int mid, int right) {
 	int n1 = mid - left + 1;
 	int n2 = right - mid;
 
+	//Create "pair" using two separate vectors
 	std::vector<std::pair<int, int> > leftArr(n1);
 	std::vector<std::pair<int, int> > rightArr(n2);
-
+	
+	//Copy all sorted elements into temp arrays
 	for (int i = 0; i < n1; ++i) {
 		leftArr[i] = container_[left + i];
 	}
@@ -74,17 +77,19 @@ void PmergeMe<T>::merge(int left, int mid, int right) {
 
 	int i = 0, j = 0, k = left;
 
+	//Do pairwise comparison
 	while (i < n1 && j < n2) {
 		if (leftArr[i].first <= rightArr[j].first) {
 		container_[k] = leftArr[i];
-		++i;
+			++i;
 		} else {
 		container_[k] = rightArr[j];
-		++j;
+			++j;
 		}
 		++k;
 	}
 
+	//Merge in remaining elements
 	while (i < n1) {
 		container_[k] = leftArr[i];
 		++i;
