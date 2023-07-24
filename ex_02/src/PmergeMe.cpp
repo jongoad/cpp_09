@@ -8,7 +8,6 @@ PmergeMe<T>::PmergeMe(char** input) {
 	for (int i = 1; input[i] != NULL; ++i) {
 		int res = std::atoi(input[i]);
 		container_.push_back(std::make_pair(res, res));
-		i++;
 	}
 	mergeInsertSort();
 }
