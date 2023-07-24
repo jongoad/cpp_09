@@ -19,7 +19,8 @@ RPN::RPN(const std::string& input) {
             continue;
         } else if ( *it == '-' || *it == '+' || *it == '*' || *it == '/') {
             if (operands_.size() < 2) {
-                std::cerr << "Error" << std::endl;
+                std::cerr << "Error: too many operators" << std::endl;
+                return;
             }
             int a = operands_.top();
             operands_.pop();
@@ -28,16 +29,16 @@ RPN::RPN(const std::string& input) {
 
             switch (*it) {
             case '-':
-                operands_.push(a - b);
+                operands_.push(b - a);
                 break;
             case '+':
-                operands_.push(a + b);
+                operands_.push(b + a);
                 break;
             case '*':
-                operands_.push(a * b);
+                operands_.push(b * a);
                 break;
             case '/':
-                operands_.push(a / b);
+                operands_.push(b / a);
                 break;
             default:
                 break;
